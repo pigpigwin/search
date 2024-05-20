@@ -91,6 +91,7 @@ def get_data(root_path):
     ratings = pd.read_csv(os.path.join(root_path, 'ratings.dat'), sep='::', engine='python', names=rnames)
     
     # 分割训练和验证集
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     trn_data, val_data, _, _ = train_test_split(ratings, ratings, test_size=0.2)
     
     trn_data = trn_data.groupby('user_id')['movie_id'].apply(list).reset_index()
