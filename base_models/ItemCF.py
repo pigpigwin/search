@@ -88,14 +88,16 @@ def rec_eval(val_rec_items, val_user_items, trn_user_items):
 def get_data(root_path):
     # 读取数据
     rnames = ['user_id','movie_id','rating','timestamp']
+    # ratings [1000209, 4]
     ratings = pd.read_csv(os.path.join(root_path, 'ratings.dat'), sep='::', engine='python', names=rnames)
     
     # 分割训练和验证集
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    # (800167, 4)  (200042, 4)
     trn_data, val_data, _, _ = train_test_split(ratings, ratings, test_size=0.2)
     
     trn_data = trn_data.groupby('user_id')['movie_id'].apply(list).reset_index()
-    val_data = val_data.groupby('user_id')['movie_id'].apply(list).reset_index()
+    val_data = val_data.groupby('user_id')['movie_id'].apply(list).reset_index() # Index(['user_id', 'movie_id'])
 
     trn_user_items = {}
     val_user_items = {}
@@ -175,7 +177,8 @@ def Item_CF(trn_user_items, val_user_items, K, N):
 
 
 if __name__ == "__main__":
-    root_path = './data/ml-1m/'
-    trn_user_items, val_user_items = get_data(root_path)
+    ROOT = os.path.dirname(os.path.abspath(__file__))
+    root_path = os.path.join(ROOT, './data/ml-1m/')
+    trn_user_items, val_user_items = get_data(root_path) # user -> items 字典形式
     rec_items = Item_CF(trn_user_items, val_user_items, 80, 10)
     rec_eval(rec_items, val_user_items, trn_user_items)
